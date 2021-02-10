@@ -62,6 +62,28 @@ if(NOT GridTools_FOUND)
   set(_gridtools_already_fetched ON CACHE INTERNAL "")
 endif()
 
+# Find or fetch HPX
+if(GTBENCH_WITH_HPX)
+  if(NOT _hpx_already_fetched)
+    find_package(HPX 1.5.1 QUIET NO_MODULE)
+  endif()
+  if(NOT HPX_FOUND)
+    set(_hpx_repository "https://github.com/STEllAR-GROUP/hpx.git")
+    set(_hpx_tag        "1.5.1")
+    if(NOT _hpx_already_fetched)
+      message(STATUS "Fetching HPX ${_hpx_tag} from ${_hpx_repository}")
+    endif()
+    include(FetchContent)
+    FetchContent_Declare(
+      hpx
+      GIT_REPOSITORY ${_hpx_repository}
+      GIT_TAG        ${_hpx_tag}
+    )
+    FetchContent_MakeAvailable(hpx)
+    set(_hpx_already_fetched ON CACHE INTERNAL "")
+  endif(NOT HPX_FOUND)
+endif(GTBENCH_WITH_HPX)
+
 # Helper functions
 function(compile_as_cuda)
   if(_gtbench_cuda_enabled)
